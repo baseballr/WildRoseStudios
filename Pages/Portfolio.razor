@@ -10,10 +10,10 @@
         <span class="brand-mark">w</span><span class="brand-name">Wild Rose Studio LLC</span>
     </a>
     <nav aria-label="Main navigation">
-        <a href="@(Navigation.BaseUri + "#stories")">Portfolio</a>
-        <a href="@(Navigation.BaseUri + "#experience")">Experience</a>
-        <a href="@(Navigation.BaseUri + "#about")">About</a>
+        <a href="@(Navigation.BaseUri + "portfolio")">Portfolio</a>
+        <a href="@(Navigation.BaseUri + "#process")">How it works</a>
         <a href="@(Navigation.BaseUri + "#contact")">Contact</a>
+        <a class="nav-cta" href="@(Navigation.BaseUri + "#contact")">Book a session</a>
     </nav>
 </header>
 
@@ -22,7 +22,7 @@
     {
         <div class="eyebrow">A few favorite stories</div>
         <h1>Made to be remembered.</h1>
-        <p class="portfolio-intro">Explore the kinds of stories Wild Rose Studio loves to capture.</p>
+        <p class="portfolio-intro">Pick the kind of session you're planning to see a preview and what to expect.</p>
         <div class="cards">
             @foreach (var album in Albums)
             {
@@ -42,10 +42,17 @@
             <img src="@album.Image" alt="@album.ImageDescription" />
             <div class="album-note">
                 <h2>A story worth keeping.</h2>
-                <p>This featured image is a preview. Full client galleries have not been added to the site yet.</p>
-                <a class="button" href="@(Navigation.BaseUri + "#contact")">Ask about a session</a>
+                <p>@album.Blurb</p>
+                <a class="button" href="@(Navigation.BaseUri + "#contact")">Ask about @album.Title.ToLower()</a>
             </div>
         </div>
+        <nav class="more-albums" aria-label="Other collections">
+            <span>Also see:</span>
+            @foreach (var other in Albums.Where(a => a.Slug != album.Slug))
+            {
+                <a href="@PortfolioHref(other.Slug)">@other.Title</a>
+            }
+        </nav>
     }
     else
     {
@@ -59,7 +66,6 @@
 <footer>
     <div class="brand-name">Wild Rose Studio LLC · Skylar Spitzer</div>
     <span>Based in Central Florida · Available wherever your story takes us</span>
-    <a class="login-link" href="@(Navigation.BaseUri + "?editor=1")">Studio editor</a>
 </footer>
 
 @code {
@@ -73,19 +79,22 @@
             "Weddings",
             "Big feelings, little details",
             "https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=85",
-            "Bride and groom celebrating their wedding day"),
+            "Bride and groom celebrating their wedding day",
+            "From getting ready to the last dance, I focus on the real moments: the nerves, the laughter, the quiet looks between the big ones. Tell me your date and venue and I'll check availability."),
         new(
             "senior-portraits",
             "Senior portraits",
             "Your next chapter, your way",
             "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85",
-            "Senior portrait in warm natural light"),
+            "Senior portrait in warm natural light",
+            "A relaxed session built around you: your favorite places, your style, your people. You'll leave with photos that feel like the person you are right now."),
         new(
             "families",
             "Families",
             "The beautifully ordinary days",
             "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=85",
-            "Family enjoying time together outside")
+            "Family enjoying time together outside",
+            "No stiff poses required. Kids, grandparents, and pets welcome. We'll keep it easy and capture how your family really is together.")
     ];
 
     private Album? SelectedAlbum => Albums.FirstOrDefault(
@@ -93,5 +102,5 @@
 
     private string PortfolioHref(string slug) => $"{Navigation.BaseUri}portfolio/{slug}";
 
-    private sealed record Album(string Slug, string Title, string Tagline, string Image, string ImageDescription);
+    private sealed record Album(string Slug, string Title, string Tagline, string Image, string ImageDescription, string Blurb);
 }

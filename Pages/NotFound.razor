@@ -1,5 +1,11 @@
-﻿@page "/not-found"
+@page "/not-found"
 @layout MainLayout
+@inject NavigationManager Navigation
 
-<h3>Not Found</h3>
-<p>Sorry, the content you are looking for does not exist.</p>
+<PageTitle>Page not found | Wild Rose Studio</PageTitle>
+<main class="portfolio-page">
+    <div class="eyebrow">404</div>
+    <h1>We couldn't find that page.</h1>
+    <p class="portfolio-intro">It may have moved. Head back to see the portfolio or get in touch.</p>
+    <a class="button" href="@Navigation.BaseUri">Back to home</a>
+</main>
