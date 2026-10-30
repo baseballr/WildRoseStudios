@@ -30,10 +30,8 @@ jobs:
       - name: Publish
         run: dotnet publish WildRoseStudios.csproj --configuration Release --output artifacts/publish
 
-      - name: Configure for GitHub Pages
-        run: |
-          sed -i 's|<base href="/" />|<base href="/WildRoseStudios/" />|' artifacts/publish/wwwroot/index.html
-          cp artifacts/publish/wwwroot/index.html artifacts/publish/wwwroot/404.html
+      - name: Add 404 fallback for client-side routes
+        run: cp artifacts/publish/wwwroot/index.html artifacts/publish/wwwroot/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
