@@ -1,0 +1,97 @@
+@page "/portfolio"
+@page "/portfolio/{Category}"
+@inject NavigationManager Navigation
+
+<PageTitle>@(SelectedAlbum is null ? "Portfolio | Wild Rose Studio" : $"{SelectedAlbum.Title} | Wild Rose Studio")</PageTitle>
+
+<div class="announcement">WILD ROSE STUDIO LLC <span>·</span> PHOTOGRAPHY BY SKYLAR SPITZER</div>
+<header class="site-header">
+    <a class="brand" href="@Navigation.BaseUri" aria-label="Wild Rose Studio LLC home">
+        <span class="brand-mark">w</span><span class="brand-name">Wild Rose Studio LLC</span>
+    </a>
+    <nav aria-label="Main navigation">
+        <a href="@(Navigation.BaseUri + "#stories")">Portfolio</a>
+        <a href="@(Navigation.BaseUri + "#experience")">Experience</a>
+        <a href="@(Navigation.BaseUri + "#about")">About</a>
+        <a href="@(Navigation.BaseUri + "#contact")">Contact</a>
+    </nav>
+</header>
+
+<main class="portfolio-page">
+    @if (Category is null)
+    {
+        <div class="eyebrow">A few favorite stories</div>
+        <h1>Made to be remembered.</h1>
+        <p class="portfolio-intro">Explore the kinds of stories Wild Rose Studio loves to capture.</p>
+        <div class="cards">
+            @foreach (var album in Albums)
+            {
+                <a class="card" href="@PortfolioHref(album.Slug)">
+                    <img src="@album.Image" alt="@album.ImageDescription" />
+                    <div class="card-label"><h2>@album.Title</h2><p>@album.Tagline</p></div>
+                </a>
+            }
+        </div>
+    }
+    else if (SelectedAlbum is { } album)
+    {
+        <a class="portfolio-back" href="@(Navigation.BaseUri + "portfolio")">← All collections</a>
+        <div class="eyebrow">@album.Tagline</div>
+        <h1>@album.Title</h1>
+        <div class="album-feature">
+            <img src="@album.Image" alt="@album.ImageDescription" />
+            <div class="album-note">
+                <h2>A story worth keeping.</h2>
+                <p>This featured image is a preview. Full client galleries have not been added to the site yet.</p>
+                <a class="button" href="@(Navigation.BaseUri + "#contact")">Ask about a session</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="eyebrow">Portfolio</div>
+        <h1>Collection not found.</h1>
+        <p class="portfolio-intro">That collection isn’t available. Browse the portfolio to see the featured categories.</p>
+        <a class="button" href="@(Navigation.BaseUri + "portfolio")">Browse collections</a>
+    }
+</main>
+
+<footer>
+    <div class="brand-name">Wild Rose Studio LLC · Skylar Spitzer</div>
+    <span>Based in Central Florida · Available wherever your story takes us</span>
+    <a class="login-link" href="@(Navigation.BaseUri + "?editor=1")">Studio editor</a>
+</footer>
+
+@code {
+    [Parameter]
+    public string? Category { get; set; }
+
+    private static readonly Album[] Albums =
+    [
+        new(
+            "weddings",
+            "Weddings",
+            "Big feelings, little details",
+            "https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=85",
+            "Bride and groom celebrating their wedding day"),
+        new(
+            "senior-portraits",
+            "Senior portraits",
+            "Your next chapter, your way",
+            "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85",
+            "Senior portrait in warm natural light"),
+        new(
+            "families",
+            "Families",
+            "The beautifully ordinary days",
+            "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=85",
+            "Family enjoying time together outside")
+    ];
+
+    private Album? SelectedAlbum => Albums.FirstOrDefault(
+        album => string.Equals(album.Slug, Category, StringComparison.OrdinalIgnoreCase));
+
+    private string PortfolioHref(string slug) => $"{Navigation.BaseUri}portfolio/{slug}";
+
+    private sealed record Album(string Slug, string Title, string Tagline, string Image, string ImageDescription);
+}
