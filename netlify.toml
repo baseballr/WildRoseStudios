@@ -1,0 +1,6 @@
+[build]
+  command = "dotnet publish WildRoseStudios.csproj --configuration Release --output artifacts/publish"
+  publish = "artifacts/publish/wwwroot"
+
+[build.environment]
+  DOTNET_VERSION = "10.0.100"

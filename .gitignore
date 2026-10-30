@@ -1,0 +1,9 @@
+# Local Netlify folder
+.netlify
+
+# .NET build outputs
+bin/
+obj/
+artifacts/
+.vs/
+*.user
