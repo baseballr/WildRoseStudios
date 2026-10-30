@@ -16,4 +16,6 @@ The contact email starts as `hello@example.com`; replace it in the editor before
 
 ## Deployment
 
-Netlify is configured in `netlify.toml` to publish the Blazor WebAssembly output. Deployments require the .NET 10 SDK.
+GitHub Pages deploys automatically when changes are pushed to `main`. The workflow builds the Blazor WebAssembly app with the .NET 10 SDK and publishes the contents of `wwwroot`. The repository must use **GitHub Actions** as its Pages build and deployment source.
+
+The workflow configures the app for the repository URL (`https://baseballr.github.io/WildRoseStudios/`). The existing `netlify.toml` can still be used to deploy to Netlify.
