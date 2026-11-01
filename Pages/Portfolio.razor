@@ -137,6 +137,10 @@
 
     private int? OpenIndex { get; set; }
 
+    private static readonly Photo SpitzerCover =
+        new("images/albums/spitzer-wedding/cover-thumb.jpg", "images/albums/spitzer-wedding/cover-thumb.jpg",
+            "Groom dipping the bride for a kiss down the aisle as the wedding party cheers");
+
     private static readonly Photo[] SpitzerPhotos =
     [
         new("images/albums/spitzer-wedding/01-thumb.jpg", "images/albums/spitzer-wedding/01.jpg",
@@ -144,12 +148,10 @@
         new("images/albums/spitzer-wedding/02-thumb.jpg", "images/albums/spitzer-wedding/02.jpg",
             "The first kiss beneath a floral arch under stormy skies"),
         new("images/albums/spitzer-wedding/03-thumb.jpg", "images/albums/spitzer-wedding/03.jpg",
-            "Groom dipping the bride for a kiss down the aisle as the wedding party cheers"),
+            "Groom dipping the bride for a kiss down the aisle in warm evening light"),
         new("images/albums/spitzer-wedding/04-thumb.jpg", "images/albums/spitzer-wedding/04.jpg",
-            "Warm-toned edit of the dip kiss down the aisle with the wedding party cheering"),
-        new("images/albums/spitzer-wedding/05-thumb.jpg", "images/albums/spitzer-wedding/05.jpg",
             "Close-up of the couple's hands forming a heart, showing both wedding rings"),
-        new("images/albums/spitzer-wedding/06-thumb.jpg", "images/albums/spitzer-wedding/06.jpg",
+        new("images/albums/spitzer-wedding/05-thumb.jpg", "images/albums/spitzer-wedding/05.jpg",
             "Groom twirling the bride in an open field beneath a dusky sky")
     ];
 
@@ -168,7 +170,7 @@
                     "The Spitzer Wedding",
                     "Storm skies & cowboy hats",
                     "A country ceremony under rolling storm clouds: laughter through the ring exchange, a first kiss beneath the arch, and one last twirl in the field before the rain.",
-                    SpitzerPhotos[2],
+                    SpitzerCover,
                     SpitzerPhotos)
             ]),
         new(
