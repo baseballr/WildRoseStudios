@@ -103,6 +103,24 @@ footer .brand-name { color: var(--ink); font-size: 15px; }
 .album-feature > img { display: block; width: 100%; max-height: 620px; object-fit: cover; }
 .album-note h2 { font: 500 29px/1.3 var(--serif); margin-bottom: 12px; }
 .album-note p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 23px; }
+.shoots { margin-top: 72px; padding-top: 52px; border-top: 1px solid var(--line); }
+.shoots h2 { font: 500 34px var(--serif); margin: 9px 0 0; }
+.shoots .card img { object-position: center 30%; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 8px; }
+.gallery-item { display: block; padding: 0; border: 0; background: #e2ded4; cursor: zoom-in; overflow: hidden; aspect-ratio: 2 / 3; }
+.gallery-item img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+.gallery-item:hover img { transform: scale(1.035); }
+.album-cta { margin-top: 56px; text-align: center; }
+.album-cta p { font: italic 22px var(--serif); color: #42534a; margin-bottom: 18px; }
+.lightbox { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 56px 72px; background: rgba(20, 28, 24, .94); cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: calc(100vh - 112px); object-fit: contain; cursor: default; box-shadow: 0 10px 40px #0006; }
+.lightbox button { position: absolute; border: 0; background: none; color: #f8f6f1; cursor: pointer; line-height: 1; opacity: .8; transition: opacity .2s; }
+.lightbox button:hover { opacity: 1; }
+.lightbox-close { top: 14px; right: 20px; font-size: 40px; padding: 4px 10px; }
+.lightbox-nav { top: 50%; transform: translateY(-50%); font-size: 54px; padding: 12px 16px; }
+.lightbox-nav.prev { left: 10px; }
+.lightbox-nav.next { right: 10px; }
+.lightbox-count { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: #d3d6cf; font-size: 12px; letter-spacing: .14em; }
 
 @media (max-width: 900px) {
   .site-header { padding: 0 5%; }
@@ -137,6 +155,11 @@ footer .brand-name { color: var(--ink); font-size: 15px; }
   .portfolio-page { padding: 45px 6% 60px; }
   .album-feature { grid-template-columns: 1fr; gap: 24px; }
   .album-feature > img { max-height: 440px; }
+  .shoots { margin-top: 48px; padding-top: 40px; }
+  .shoots h2 { font-size: 29px; }
+  .gallery { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .lightbox { padding: 56px 12px; }
+  .lightbox-nav { top: auto; bottom: 4px; transform: none; font-size: 44px; }
   .quote blockquote { font-size: 21px; }
   footer { padding: 20px 6%; gap: 15px; flex-wrap: wrap; }
 }
