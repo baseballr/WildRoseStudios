@@ -1,8 +1,9 @@
 @page "/portfolio"
 @page "/portfolio/{Category}"
+@page "/portfolio/{Category}/{ShootSlug}"
 @inject NavigationManager Navigation
 
-<PageTitle>@(SelectedAlbum is null ? "Portfolio | Wild Rose Studio" : $"{SelectedAlbum.Title} | Wild Rose Studio")</PageTitle>
+<PageTitle>@PageTitleText</PageTitle>
 
 <div class="announcement">WILD ROSE STUDIO LLC <span>·</span> PHOTOGRAPHY BY SKYLAR ROSE</div>
 <header class="site-header">
@@ -33,6 +34,49 @@
             }
         </div>
     }
+    else if (SelectedAlbum is { } parent && ShootSlug is not null)
+    {
+        if (SelectedShoot is { } shoot)
+        {
+            <a class="portfolio-back" href="@PortfolioHref(parent.Slug)">← All @parent.Title.ToLower()</a>
+            <div class="eyebrow">@parent.Title · @shoot.Subtitle</div>
+            <h1>@shoot.Title</h1>
+            <p class="portfolio-intro">@shoot.Description</p>
+            <div class="gallery">
+                @for (var i = 0; i < shoot.Photos.Length; i++)
+                {
+                    var index = i;
+                    var photo = shoot.Photos[i];
+                    <button type="button" class="gallery-item" @onclick="() => OpenPhoto(index)" aria-label="View larger: @photo.Alt">
+                        <img src="@photo.Thumb" alt="@photo.Alt" loading="lazy" />
+                    </button>
+                }
+            </div>
+            <div class="album-cta">
+                <p>Planning your own day?</p>
+                <a class="button" href="@(Navigation.BaseUri + "#contact")">Ask about @parent.Title.ToLower()</a>
+            </div>
+
+            @if (OpenIndex is int open)
+            {
+                var current = shoot.Photos[open];
+                <div class="lightbox" role="dialog" aria-modal="true" aria-label="@shoot.Title photo viewer" @onclick="ClosePhoto">
+                    <button type="button" class="lightbox-close" @onclick="ClosePhoto" aria-label="Close">×</button>
+                    <button type="button" class="lightbox-nav prev" @onclick="() => StepPhoto(-1, shoot)" @onclick:stopPropagation aria-label="Previous photo">‹</button>
+                    <img src="@current.Full" alt="@current.Alt" @onclick:stopPropagation />
+                    <button type="button" class="lightbox-nav next" @onclick="() => StepPhoto(1, shoot)" @onclick:stopPropagation aria-label="Next photo">›</button>
+                    <div class="lightbox-count">@(open + 1) / @shoot.Photos.Length</div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="eyebrow">@parent.Title</div>
+            <h1>Album not found.</h1>
+            <p class="portfolio-intro">That album isn’t available. Browse the other @parent.Title.ToLower() albums instead.</p>
+            <a class="button" href="@PortfolioHref(parent.Slug)">Back to @parent.Title.ToLower()</a>
+        }
+    }
     else if (SelectedAlbum is { } album)
     {
         <a class="portfolio-back" href="@(Navigation.BaseUri + "portfolio")">← All collections</a>
@@ -46,6 +90,22 @@
                 <a class="button" href="@(Navigation.BaseUri + "#contact")">Ask about @album.Title.ToLower()</a>
             </div>
         </div>
+        @if (album.Shoots.Length > 0)
+        {
+            <section class="shoots" aria-labelledby="shoots-heading">
+                <div class="eyebrow">Albums</div>
+                <h2 id="shoots-heading">Real @album.Title.ToLower(), start to finish.</h2>
+                <div class="cards">
+                    @foreach (var shoot in album.Shoots)
+                    {
+                        <a class="card" href="@($"{PortfolioHref(album.Slug)}/{shoot.Slug}")">
+                            <img src="@shoot.Cover.Thumb" alt="@shoot.Cover.Alt" loading="lazy" />
+                            <div class="card-label"><h3>@shoot.Title</h3><p>@shoot.Photos.Length photos · View album</p></div>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
         <nav class="more-albums" aria-label="Other collections">
             <span>Also see:</span>
             @foreach (var other in Albums.Where(a => a.Slug != album.Slug))
@@ -72,6 +132,23 @@
     [Parameter]
     public string? Category { get; set; }
 
+    [Parameter]
+    public string? ShootSlug { get; set; }
+
+    private int? OpenIndex { get; set; }
+
+    private static readonly Photo[] SpitzerPhotos =
+    [
+        new("images/albums/spitzer-wedding/01-thumb.jpg", "images/albums/spitzer-wedding/01.jpg",
+            "Bride and groom laughing with their officiant during the ring exchange"),
+        new("images/albums/spitzer-wedding/02-thumb.jpg", "images/albums/spitzer-wedding/02.jpg",
+            "The first kiss beneath a floral arch under stormy skies"),
+        new("images/albums/spitzer-wedding/03-thumb.jpg", "images/albums/spitzer-wedding/03.jpg",
+            "Groom dipping the bride for a kiss down the aisle as the wedding party cheers"),
+        new("images/albums/spitzer-wedding/04-thumb.jpg", "images/albums/spitzer-wedding/04.jpg",
+            "Groom twirling the bride in an open field at dusk")
+    ];
+
     private static readonly Album[] Albums =
     [
         new(
@@ -80,7 +157,16 @@
             "Big feelings, little details",
             "https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=85",
             "Bride and groom celebrating their wedding day",
-            "From getting ready to the last dance, I focus on the real moments: the nerves, the laughter, the quiet looks between the big ones. Tell me your date and venue and I'll check availability."),
+            "From getting ready to the last dance, I focus on the real moments: the nerves, the laughter, the quiet looks between the big ones. Tell me your date and venue and I'll check availability.",
+            [
+                new(
+                    "spitzer-wedding",
+                    "The Spitzer Wedding",
+                    "Storm skies & cowboy hats",
+                    "A country ceremony under rolling storm clouds: laughter through the ring exchange, a first kiss beneath the arch, and one last twirl in the field before the rain.",
+                    SpitzerPhotos[2],
+                    SpitzerPhotos)
+            ]),
         new(
             "senior-portraits",
             "Senior portraits",
@@ -100,7 +186,36 @@
     private Album? SelectedAlbum => Albums.FirstOrDefault(
         album => string.Equals(album.Slug, Category, StringComparison.OrdinalIgnoreCase));
 
+    private Shoot? SelectedShoot => SelectedAlbum?.Shoots.FirstOrDefault(
+        shoot => string.Equals(shoot.Slug, ShootSlug, StringComparison.OrdinalIgnoreCase));
+
+    private string PageTitleText =>
+        SelectedShoot is { } shoot ? $"{shoot.Title} | Wild Rose Studio"
+        : SelectedAlbum is { } album && ShootSlug is null ? $"{album.Title} | Wild Rose Studio"
+        : "Portfolio | Wild Rose Studio";
+
+    protected override void OnParametersSet() => OpenIndex = null;
+
+    private void OpenPhoto(int index) => OpenIndex = index;
+
+    private void ClosePhoto() => OpenIndex = null;
+
+    private void StepPhoto(int delta, Shoot shoot)
+    {
+        if (OpenIndex is int index)
+        {
+            OpenIndex = (index + delta + shoot.Photos.Length) % shoot.Photos.Length;
+        }
+    }
+
     private string PortfolioHref(string slug) => $"{Navigation.BaseUri}portfolio/{slug}";
 
-    private sealed record Album(string Slug, string Title, string Tagline, string Image, string ImageDescription, string Blurb);
+    private sealed record Album(string Slug, string Title, string Tagline, string Image, string ImageDescription, string Blurb, Shoot[]? ShootList = null)
+    {
+        public Shoot[] Shoots => ShootList ?? [];
+    }
+
+    private sealed record Shoot(string Slug, string Title, string Subtitle, string Description, Photo Cover, Photo[] Photos);
+
+    private sealed record Photo(string Thumb, string Full, string Alt);
 }
